@@ -1,0 +1,100 @@
+Player_Name,Country,Matches,Innings,Total_100s,Total_50s,Batting_Avg,Strike_Rate
+V. Kohli,India,311,299,54,77,58.71,93.5
+D. Mitchell,New Zealand,56,51,7,11,53.13,110.3
+R. Sharma,India,265,258,31,55,49.12,92.4
+B. Azam,Pakistan,140,137,20,37,53.72,89.1
+Q. de Kock,South Africa,155,155,21,30,45.74,96.6
+D. Warner,Australia,161,159,22,33,45.30,97.2
+J. Root,England,174,163,16,39,47.85,86.7
+S. Hope,West Indies,124,119,16,25,50.12,78.9
+K. Mendis,Sri Lanka,130,125,5,31,36.45,88.2
+H. Brook,England,38,35,3,6,39.82,102.5
+T. Head,Australia,65,62,6,15,44.21,112.4
+I. Zadran,Afghanistan,39,39,6,9,51.91,85.6
+S. Gill,India,58,58,8,15,56.36,103.4
+R. Ravindra,New Zealand,45,40,4,12,41.25,106.8
+F. Zaman,Pakistan,82,81,11,16,46.50,94.1
+G. Maxwell,Australia,142,130,4,23,35.12,126.7
+H. Klaasen,South Africa,58,52,4,8,40.35,117.1
+L. Tucker,Ireland,55,50,2,14,34.80,89.3
+P. Nissanka,Sri Lanka,60,58,6,18,43.20,91.5
+A. Omarzai,Afghanistan,35,30,1,6,38.45,98.2
+S. Raza,Zimbabwe,145,138,7,22,36.80,85.4
+J. Bethell,England,12,10,1,3,44.10,115.6
+M. Kumar,USA,22,21,3,7,67.73,82.4
+M. Bracewell,New Zealand,40,32,2,6,37.15,108.9
+C. Asalanka,Sri Lanka,62,55,4,16,42.80,89.6
+A. Markram,South Africa,70,65,4,12,37.20,95.4
+K. L. Rahul,India,75,70,7,18,50.45,87.9
+M. Marsh,Australia,88,82,3,19,35.60,94.3
+N. Pooran,West Indies,65,60,3,11,38.90,115.2
+S. Ayub,Pakistan,24,24,2,5,39.10,105.4
+J. Liyanage,Sri Lanka,18,17,1,4,36.50,88.2
+D. Malan,England,30,30,6,7,55.76,96.4
+S. Hetmyer,West Indies,55,52,5,6,34.20,106.5
+F. Allen,New Zealand,32,32,1,5,31.40,121.2
+T. de Zorzi,South Africa,15,15,2,3,48.50,92.6
+R. Gurbaz,Afghanistan,42,42,7,10,38.20,91.8
+H. Tector,Ireland,45,43,5,12,48.90,84.5
+G. Munsey,Scotland,58,56,2,15,38.40,94.2
+S. Edwards,Netherlands,48,44,1,16,39.60,85.1
+B. King,West Indies,42,40,2,8,32.40,84.6
+M. Labuschagne,Australia,55,50,2,11,37.80,83.4
+P. Stirling,Ireland,160,155,14,29,37.60,86.5
+T. Hridoy,Bangladesh,35,31,1,8,36.40,87.9
+S. Mirza,Pakistan,12,8,0,1,22.40,118.5
+R. Jadeja,India,197,132,0,13,32.45,87.2
+M. Starc,Australia,125,58,0,1,18.20,91.4
+K. Jamieson,New Zealand,25,18,0,2,24.60,95.8
+D. Conway,New Zealand,38,38,5,8,46.20,90.4
+S. Iyer,India,73,67,5,23,47.81,96.5
+B. Stokes,England,114,105,5,22,40.60,95.3
+J. Bairstow,England,107,98,11,16,42.80,103.6
+C. Woakes,England,122,85,0,6,28.40,89.1
+T. Boult,New Zealand,114,48,0,0,15.30,78.4
+K. Maharaj,South Africa,45,28,0,1,19.80,84.6
+T. Bavuma,South Africa,38,37,5,4,45.20,89.4
+A. Nortje,South Africa,22,10,0,0,10.20,72.4
+M. Siraj,India,45,15,0,0,12.50,75.2
+K. Yadav,India,105,42,0,0,16.80,70.4
+R. Khan,Afghanistan,101,84,0,5,23.50,104.2
+M. Nabi,Afghanistan,165,142,2,16,27.10,85.6
+N. Zadran,Afghanistan,88,80,2,17,32.40,88.9
+L. Kumara,Sri Lanka,35,12,0,0,11.50,65.4
+D. Chameera,Sri Lanka,55,25,0,1,14.80,72.1
+S. Al Hasan,Bangladesh,247,235,9,56,37.10,82.6
+M. Rahim,Bangladesh,260,245,9,48,36.50,79.4
+L. Das,Bangladesh,92,88,5,12,32.60,88.2
+M. Wood,England,66,28,0,0,12.40,85.6
+J. Archer,England,35,18,0,1,16.50,94.2
+H. Ali,Pakistan,68,35,0,1,17.80,92.4
+S. Afridi,Pakistan,55,22,0,0,15.60,84.1
+I. Ahmed,Pakistan,38,30,1,4,36.20,101.4
+A. Salman,Pakistan,25,22,0,5,39.40,92.6
+G. Phillips,New Zealand,35,30,1,4,34.50,113.6
+M. Santner,New Zealand,104,78,0,3,27.80,89.5
+W. Young,New Zealand,35,35,3,8,42.50,88.4
+C. Gayle,West Indies,301,294,25,54,37.80,87.2
+K. Pollard,West Indies,123,113,3,15,26.40,94.5
+A. Russell,West Indies,56,45,0,4,27.20,130.2
+J. Holder,West Indies,138,110,0,12,24.80,79.6
+S. Alzarri,West Indies,45,25,0,0,15.40,70.2
+P. Cummins,Australia,88,42,0,1,18.50,86.4
+A. Zampa,Australia,99,48,0,0,14.20,74.5
+J. Hazlewood,Australia,85,22,0,0,11.80,68.2
+U. Khawaja,Australia,40,39,2,12,42.10,83.4
+S. Smith,Australia,155,142,12,32,43.50,87.4
+H. Pandya,India,86,62,0,11,34.20,110.4
+S. Samson,India,16,14,1,3,56.50,99.2
+R. Pant,India,35,30,1,5,34.60,106.5
+I. Kishan,India,32,30,1,7,42.40,102.1
+Y. Chahal,India,72,18,0,0,11.20,62.4
+W. Hasaranga,Sri Lanka,54,48,0,4,24.50,108.6
+D. Wellalage,Sri Lanka,25,20,0,1,22.80,82.4
+M. Pathirana,Sri Lanka,15,5,0,0,8.40,60.2
+K. Rabada,South Africa,101,45,0,0,15.80,78.4
+L. Ngidi,South Africa,56,22,0,0,12.40,72.1
+T. Shamsi,South Africa,52,15,0,0,9.20,62.4
+B. Fortuin,South Africa,18,12,0,0,17.50,78.5
+D. Miller,South Africa,174,152,6,23,42.50,103.4
+R. van der Dussen,South Africa,65,58,6,15,54.20,89.2

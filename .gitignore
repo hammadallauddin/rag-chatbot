@@ -1,0 +1,18 @@
+# --- Gemini & API Keys ---
+.env
+
+# --- Python & Environments ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv
+venv/
+ENV/
+env/
+
+# --- Jupyter Notebooks ---
+.ipynb_checkpoints
+
+# --- App Specific ---
+# Ignore the logs created by your FastAPI/Streamlit app
+*.log
