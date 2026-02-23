@@ -1,4 +1,5 @@
 """Vector store repository for managing Chroma operations."""
+import os
 from typing import List
 import logging
 
@@ -37,9 +38,13 @@ class VectorStoreRepository:
     def embedding_function(self) -> GoogleGenerativeAIEmbeddings:
         """Lazy initialization of embedding function."""
         if self._embedding_function is None:
+            # Get API key from environment directly
+            api_key = os.environ.get("GOOGLE_API_KEY") or settings.google_api_key
+            
             self._embedding_function = GoogleGenerativeAIEmbeddings(
                 model=settings.embedding_model,
-                task_type="retrieval_document"
+                task_type="retrieval_document",
+                google_api_key=api_key
             )
         return self._embedding_function
 
@@ -49,7 +54,8 @@ class VectorStoreRepository:
         if self._vectorstore is None:
             self._vectorstore = Chroma(
                 persist_directory=settings.chroma_persist_directory,
-                embedding_function=self.embedding_function
+                embedding_function=self.embedding_function,
+                collection_name="cricket_data"
             )
         return self._vectorstore
 
@@ -58,8 +64,14 @@ class VectorStoreRepository:
         if not file_path.endswith('.csv'):
             raise ValueError(f"Only CSV files are supported. Received: {file_path}")
 
-        loader = CSVLoader(file_path=file_path)
+        loader = CSVLoader(file_path=file_path, source_column="Player_Name")
         documents = loader.load()
+        
+        # Log sample document for debugging
+        if documents:
+            logger.info(f"Sample document content: {documents[0].page_content}")
+            logger.info(f"Sample document metadata: {documents[0].metadata}")
+        
         return self.text_splitter.split_documents(documents)
 
     def index_document(self, file_path: str, file_id: int) -> bool:

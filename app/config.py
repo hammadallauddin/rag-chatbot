@@ -13,23 +13,29 @@ class Settings(BaseSettings):
 
     # Server Settings
     host: str = "0.0.0.0"
-    port: int = 8086
+    port: int = 8090
 
     # Database Settings
     db_name: str = "rag_app.db"
 
     # Chroma Settings
     chroma_persist_directory: str = "./chroma_db"
-    chroma_chunk_size: int = 1000
-    chroma_chunk_overlap: int = 200
+    chroma_chunk_size: int = 500
+    chroma_chunk_overlap: int = 50
 
     # LLM Settings
+    google_api_key: str = ""
     embedding_model: str = "models/gemini-embedding-001"
     default_model: str = "gemini-2.5-flash"
     llm_temperature: float = 0.0
 
     # RAG Settings
     retriever_k: int = 2
+
+    # LangChain Settings
+    langchain_tracing_v2: bool = False
+    langchain_project: str = "rag-chatbot"
+    langchain_api_key: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env",

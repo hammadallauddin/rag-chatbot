@@ -5,6 +5,7 @@ A FastAPI-based REST API for a Retrieval-Augmented Generation chatbot
 using LangChain, Chroma vector store, and Google Gemini AI.
 """
 import logging
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -32,6 +33,19 @@ async def lifespan(app: FastAPI):
     """Application lifespan events."""
     # Startup
     logger.info("Starting RAG Chatbot API...")
+    
+    # Debug: Log all settings
+    logger.info(f"GOOGLE_API_KEY: {settings.google_api_key[:10] if settings.google_api_key else 'NOT SET'}...")
+    logger.info(f"LANGCHAIN_API_KEY: {settings.langchain_api_key[:10] if settings.langchain_api_key else 'NOT SET'}...")
+    logger.info(f"LANGCHAIN_TRACING_V2: {settings.langchain_tracing_v2}")
+    logger.info(f"LANGCHAIN_PROJECT: {settings.langchain_project}")
+    
+    # Set environment variables from settings
+    os.environ["GOOGLE_API_KEY"] = settings.google_api_key or ""
+    os.environ["LANGCHAIN_API_KEY"] = settings.langchain_api_key or ""
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGCHAIN_PROJECT"] = settings.langchain_project or "rag-chatbot"
+    
     db_repository.initialize_tables()
     logger.info("Database initialized successfully")
     yield

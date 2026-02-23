@@ -1,18 +1,55 @@
-# --- Gemini & API Keys ---
+# --- Data & Database ---
+chroma_db/
+rag_app.db
+temp_*.csv
+*.csv
+
+# --- Environment Variables ---
 .env
+.env.local
+.env.*.local
 
 # --- Python & Environments ---
 __pycache__/
 *.py[cod]
 *$py.class
-.venv
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
 venv/
 ENV/
 env/
+.env/
+.venv
+
+# --- IDE & Editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
 
 # --- Jupyter Notebooks ---
 .ipynb_checkpoints
+*.ipynb
 
-# --- App Specific ---
-# Ignore the logs created by your FastAPI/Streamlit app
+# --- Application Logs ---
 *.log
+logs/
+app.log

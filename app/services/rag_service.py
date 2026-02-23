@@ -1,33 +1,33 @@
 """RAG (Retrieval-Augmented Generation) service for chat operations."""
 import logging
-from typing import List
+import os
+from typing import List, Optional
 
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import HumanMessage, AIMessage
-from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.runnables import RunnableConfig
 
 from app.config import settings
 from app.repositories.vectorstore import vectorstore_repository
 
 logger = logging.getLogger(__name__)
 
-# Contextualize prompt for handling chat history
-CONTEXTUALIZE_Q_SYSTEM_PROMPT = (
-    "Given a chat history and the latest user question "
-    "which might reference context in the chat history, "
-    "formulate a standalone question which can be understood "
-    "without the chat history. Do NOT answer the question, "
-    "just reformulate it if needed and otherwise return it as is."
-)
+# LangChain project name for tracing
+LANGCHAIN_PROJECT = os.environ.get("LANGCHAIN_PROJECT", "rag-chatbot")
 
 # QA prompt for answering questions
 QA_SYSTEM_PROMPT = (
-    "You are a helpful AI assistant. Use the following context to answer the user's question. "
-    "If you don't know the answer, say so honestly. "
+    "You are a helpful assistant. Use the following context to answer the user's question accurately. "
+    "If you don't know the answer based on the context, say so honestly. "
     "Context: {context}"
 )
+
+
+class RAGServiceError(Exception):
+    """Custom exception for RAG service errors."""
+    pass
 
 
 class RAGService:
@@ -40,16 +40,35 @@ class RAGService:
     def _get_llm(self, model_name: str) -> ChatGoogleGenerativeAI:
         """Get or create an LLM instance (cached)."""
         if model_name not in self._llm_cache:
+            # Get API key from environment directly
+            api_key = os.environ.get("GOOGLE_API_KEY") or settings.google_api_key
+            
+            if not api_key:
+                # Log what's available for debugging
+                logger.error(f"GOOGLE_API_KEY env var: {os.environ.get('GOOGLE_API_KEY')}")
+                logger.error(f"settings.google_api_key: {settings.google_api_key}")
+                raise RAGServiceError("Google API key is not configured. Please set GOOGLE_API_KEY in .env file.")
+            
             self._llm_cache[model_name] = ChatGoogleGenerativeAI(
                 model=model_name,
                 temperature=settings.llm_temperature,
-                convert_system_message_to_human=True
+                convert_system_message_to_human=True,
+                google_api_key=api_key
             )
+            logger.info(f"Created new LLM instance for model: {model_name}")
         return self._llm_cache[model_name]
+
+    def clear_llm_cache(self) -> None:
+        """Clear the LLM cache to force recreation of instances."""
+        self._llm_cache.clear()
+        logger.info("LLM cache cleared")
 
     def _convert_chat_history(self, history: List[dict]) -> List:
         """Convert database history format to LangChain message format."""
         messages = []
+        if not history:
+            return messages
+            
         for msg in history:
             role = msg.get("role", "")
             content = msg.get("content", "")
@@ -61,60 +80,115 @@ class RAGService:
 
     def _format_docs(self, docs) -> str:
         """Format retrieved documents into a string."""
-        return "\n\n".join(doc.page_content for doc in docs)
+        if not docs:
+            return "No relevant information found in the uploaded documents."
+        
+        formatted_docs = []
+        for doc in docs:
+            # Build a readable string from metadata
+            metadata = doc.metadata if hasattr(doc, 'metadata') else {}
+            parts = []
+            for key, value in metadata.items():
+                if value is not None:
+                    parts.append(f"{key}: {value}")
+            
+            metadata_str = ", ".join(parts) if parts else "No metadata"
+            formatted_docs.append(f"[{metadata_str}]\n{doc.page_content}")
+        
+        return "\n\n".join(formatted_docs)
 
-    def get_response(self, question: str, chat_history: List[dict], model_name: str = None) -> str:
-        """Get a response from the RAG chain."""
+    def get_response(
+        self, 
+        question: str, 
+        chat_history: List[dict], 
+        model_name: Optional[str] = None
+    ) -> str:
+        """Get a response from the RAG chain.
+        
+        Args:
+            question: The user's question
+            chat_history: List of previous chat messages
+            model_name: Optional model name override
+            
+        Returns:
+            The AI's response string
+            
+        Raises:
+            RAGServiceError: If there's an error in the RAG pipeline
+        """
+        if not question or not question.strip():
+            raise RAGServiceError("Question cannot be empty.")
+        
         model = model_name or settings.default_model
-        llm = self._get_llm(model)
+        logger.info(f"Processing chat request with model: {model}")
+        
+        try:
+            llm = self._get_llm(model)
+        except Exception as e:
+            logger.error(f"Failed to initialize LLM: {e}")
+            raise RAGServiceError(f"Failed to initialize LLM: {str(e)}")
 
         # Get retriever
-        retriever = vectorstore_repository.get_retriever()
-
-        # Create contextualize prompt for handling history
-        contextualize_q_prompt = ChatPromptTemplate.from_messages([
-            ("system", CONTEXTUALIZE_Q_SYSTEM_PROMPT),
-            MessagesPlaceholder(variable_name="chat_history"),
-            ("human", "{input}"),
-        ])
+        try:
+            retriever = vectorstore_repository.get_retriever()
+        except Exception as e:
+            logger.error(f"Failed to get retriever: {e}")
+            raise RAGServiceError(f"Failed to get retriever: {str(e)}")
 
         # Create QA prompt
         qa_prompt = ChatPromptTemplate.from_messages([
             ("system", QA_SYSTEM_PROMPT),
-            MessagesPlaceholder(variable_name="chat_history"),
+            MessagesPlaceholder(variable_name="chat_history", optional=True),
             ("human", "{input}")
         ])
 
         # Convert chat history to LangChain format
         lc_chat_history = self._convert_chat_history(chat_history)
 
-        # If there's chat history, reformulate the question first
-        if lc_chat_history:
-            # Create a chain to contextualize the question
-            contextualize_chain = contextualize_q_prompt | llm | StrOutputParser()
-            
-            # Get reformulated question
-            reformulated_question = contextualize_chain.invoke({
-                "input": question,
-                "chat_history": lc_chat_history
-            })
-        else:
-            reformulated_question = question
+        # Use the original question for retrieval
+        search_question = question.strip()
 
         # Retrieve documents
-        retrieved_docs = retriever.invoke(reformulated_question)
+        try:
+            retrieved_docs = retriever.invoke(search_question)
+            logger.info(f"Retrieved {len(retrieved_docs)} documents for question: {search_question}")
+        except Exception as e:
+            logger.error(f"Error retrieving documents: {e}")
+            retrieved_docs = []
+
+        # Format context
         formatted_context = self._format_docs(retrieved_docs)
+        
+        if settings.debug:
+            logger.debug(f"Formatted context: {formatted_context[:500]}...")
 
         # Generate answer using the QA prompt
-        qa_chain = qa_prompt | llm | StrOutputParser()
-        
-        answer = qa_chain.invoke({
-            "input": reformulated_question,
-            "context": formatted_context,
-            "chat_history": lc_chat_history
-        })
-
-        return answer
+        try:
+            qa_chain = qa_prompt | llm | StrOutputParser()
+            
+            # Build the input for the chain
+            chain_input = {
+                "input": search_question,
+                "context": formatted_context
+            }
+            
+            # Only add chat_history if it exists
+            if lc_chat_history:
+                chain_input["chat_history"] = lc_chat_history
+            
+            # Configure LangChain tracing
+            config = RunnableConfig(
+                configurable={"project_name": LANGCHAIN_PROJECT},
+                tags=["rag-chatbot", f"model-{model}"]
+            )
+            
+            answer = qa_chain.invoke(chain_input, config=config)
+            logger.info(f"Successfully generated response ({len(answer)} chars)")
+            return answer
+            
+        except Exception as e:
+            logger.error(f"Error generating response: {e}")
+            raise RAGServiceError(f"Error generating response: {str(e)}")
 
 
 # Singleton instance
